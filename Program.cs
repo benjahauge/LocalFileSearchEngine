@@ -22,10 +22,9 @@ public class Config
 
 public class AppConfig
 {
-    private static readonly string ConfigDir = Path.Combine(
-        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-        "FileSearchEngine");
-    private static readonly string ConfigFile = Path.Combine(ConfigDir, "config.json");
+    private static readonly string AppDir = "/Users/benjahauge/Projects/PrivateDev/DotNet/.filesearch";
+    private static readonly string ConfigFile = Path.Combine(AppDir, "config.json");
+    private static readonly string IndexFile = Path.Combine(AppDir, "index.json");
 
     public static Config Load()
     {
@@ -45,11 +44,36 @@ public class AppConfig
     {
         try
         {
-            Directory.CreateDirectory(ConfigDir);
+            Directory.CreateDirectory(AppDir);
             var json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(ConfigFile, json);
         }
         catch { }
+    }
+
+    public static void SaveIndex(List<FileResult> index)
+    {
+        try
+        {
+            Directory.CreateDirectory(AppDir);
+            var json = JsonSerializer.Serialize(index, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(IndexFile, json);
+        }
+        catch { }
+    }
+
+    public static List<FileResult>? LoadIndex()
+    {
+        try
+        {
+            if (File.Exists(IndexFile))
+            {
+                var json = File.ReadAllText(IndexFile);
+                return JsonSerializer.Deserialize<List<FileResult>>(json);
+            }
+        }
+        catch { }
+        return null;
     }
 }
 
@@ -140,17 +164,49 @@ public static class Program
             return 0;
         }
 
-        var startTime = DateTime.Now;
-        await AnsiConsole.Status()
-            .Spinner(Spinner.Known.Star)
-            .SpinnerStyle(Spectre.Console.Color.Yellow)
-            .StartAsync("Building file index...", async ctx =>
+        var loadedIndex = AppConfig.LoadIndex();
+        if (loadedIndex != null && loadedIndex.Count > 0)
+        {
+            lock (_indexLock)
             {
-                await BuildIndexAsync(config);
-            });
+                _fileIndex = loadedIndex;
+            }
+            int fileCount, dirCount;
+            lock (_indexLock)
+            {
+                fileCount = _fileIndex.Count(f => !f.IsDirectory);
+                dirCount = _fileIndex.Count(f => f.IsDirectory);
+            }
+            AnsiConsole.MarkupLine($"[green]✓ Loaded {fileCount} files, {dirCount} folders from cache[/]");
+        }
+        else
+        {
+            var startTime = DateTime.Now;
+            await AnsiConsole.Status()
+                .Spinner(Spinner.Known.Star)
+                .SpinnerStyle(Spectre.Console.Color.Yellow)
+                .StartAsync("Building file index...", async ctx =>
+                {
+                    await BuildIndexAsync(config);
+                });
+            
+            var elapsed = (DateTime.Now - startTime).TotalSeconds;
+            int fileCount, dirCount;
+            lock (_indexLock)
+            {
+                fileCount = _fileIndex.Count(f => !f.IsDirectory);
+                dirCount = _fileIndex.Count(f => f.IsDirectory);
+            }
+            AnsiConsole.MarkupLine($"[green]✓ Indexed {fileCount} files, {dirCount} folders in {elapsed:F1}s[/]");
+            
+            AppConfig.SaveIndex(_fileIndex);
+            AnsiConsole.MarkupLine("[dim]Index saved to disk[/]");
+        }
         
-        var elapsed = (DateTime.Now - startTime).TotalSeconds;
-        AnsiConsole.MarkupLine($"[green]✓ Indexed { _fileIndex.Count} files in {elapsed:F1}s[/]");
+        Console.CancelKeyPress += (s, e) =>
+        {
+            AppConfig.SaveIndex(_fileIndex);
+        };
         
         while (true)
         {
@@ -305,12 +361,14 @@ public static class Program
                     
                     var elapsed = (DateTime.Now - startTime).TotalSeconds;
                     
+                    AppConfig.SaveIndex(_fileIndex);
+                    
                     var allPaths = DefaultSearchPaths.Where(Directory.Exists)
                         .Concat(_customPaths.Where(Directory.Exists))
                         .Distinct()
                         .ToList();
                     
-                    _statusMessage = $"[green]✓ Added '{_pendingPath}' ({_fileIndex.Count} files from {allPaths.Count} paths in {elapsed:F1}s)[/]";
+                    _statusMessage = $"[green]✓ Added '{_pendingPath}' ({_fileIndex.Count} items from {allPaths.Count} paths in {elapsed:F1}s)[/]";
                 }
                 else
                 {

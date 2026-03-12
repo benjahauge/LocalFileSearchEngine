@@ -16,3 +16,4 @@
 /Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/obj/Debug/net10.0/filesearch.pdb
 /Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/obj/Debug/net10.0/FileSearchEngine.genruntimeconfig.cache
 /Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/obj/Debug/net10.0/ref/filesearch.dll
+/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/obj/Debug/net10.0/FileSearchEngine.sourcelink.json

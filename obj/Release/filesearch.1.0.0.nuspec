@@ -8,7 +8,7 @@
     <packageTypes>
       <packageType name="DotnetTool" />
     </packageTypes>
-    <repository type="git" />
+    <repository type="git" commit="07b8503a975c001ea12350300acbb5f975b0089c" />
   </metadata>
   <files>
     <file src="/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/obj/Release/net10.0/DotnetToolSettings.xml" target="tools/net10.0/any/DotnetToolSettings.xml" />
