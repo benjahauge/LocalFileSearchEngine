@@ -1,0 +1,7 @@
+/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/bin/Release/net10.0/publish/filesearch
+/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/bin/Release/net10.0/publish/filesearch.dll
+/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/bin/Release/net10.0/publish/filesearch.deps.json
+/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/bin/Release/net10.0/publish/filesearch.runtimeconfig.json
+/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/bin/Release/net10.0/publish/filesearch.pdb
+/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/bin/Release/net10.0/publish/FuzzySharp.dll
+/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/bin/Release/net10.0/publish/Spectre.Console.dll
