@@ -8,9 +8,9 @@ public static class InputHandler
 {
     public static async Task HandleAddPathKey(ConsoleKeyInfo key, Config config, List<string> _customPaths)
     {
-        var searchQuery = "";
         if (key.Key == ConsoleKey.Escape)
         {
+            Global.SearchQuery = "";
             Global.IsAddPathMode = false;
             Global.PendingPath = "";
             return;
@@ -32,12 +32,12 @@ public static class InputHandler
                         .SpinnerStyle(Color.Yellow)
                         .StartAsync("Rebuilding index...", async ctx =>
                         {
-                            await PathHelper.BuildIndexAsync(config);
+                            await IndexService.BuildAsync(config);
                         });
                     
                     var elapsed = (DateTime.Now - startTime).TotalSeconds;
                     
-                    AppConfig.SaveIndex(await PathHelper.InitializeIndex(config));
+                    AppConfig.SaveIndex(await IndexService.LoadOrBuildAsync(config));
                     
                     var allPaths = Global.DefaultSearchPaths.Where(Directory.Exists)
                         .Concat(_customPaths.Where(Directory.Exists))
@@ -75,7 +75,6 @@ public static class InputHandler
     
     public static async Task HandleSearchKey(ConsoleKeyInfo key, Config config)
     {
-        var searchQuery = "";
         if (key.Modifiers == ConsoleModifiers.Control && key.Key == ConsoleKey.P)
         {
             Global.IsAddPathMode = true;
@@ -85,15 +84,16 @@ public static class InputHandler
 
         if (key.Key == ConsoleKey.Escape)
         {
+            Global.SearchQuery = "";
             Global.Results = [];
             Global.SelectedIndex = 0;
             return;
         }
 
-        if (key.Key == ConsoleKey.Backspace && searchQuery.Length > 0)
+        if (key.Key == ConsoleKey.Backspace && Global.SearchQuery.Length > 0)
         {
-            searchQuery = searchQuery[..^1];
-            SearchService.SearchFiles(searchQuery);
+            Global.SearchQuery = Global.SearchQuery[..^1];
+            SearchService.SearchFiles(Global.SearchQuery);
             Global.SelectedIndex = 0;
             return;
         }
@@ -194,8 +194,8 @@ public static class InputHandler
 
         if (key.KeyChar >= 32 && key.KeyChar <= 126)
         {
-            searchQuery += key.KeyChar;
-            SearchService.SearchFiles(searchQuery);
+            Global.SearchQuery += key.KeyChar;
+            SearchService.SearchFiles(Global.SearchQuery);
             Global.SelectedIndex = 0;
         }
     }

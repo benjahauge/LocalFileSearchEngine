@@ -2,21 +2,13 @@ using Spectre.Console;
 
 namespace FileSearchEngine.UI;
 
-public class RenderService
+public static class RenderService
 {
-    private readonly List<string> _configCustomPaths;
 
-    private string _searchQuery = "";
     // private string _pendingPath = "";
     
-    public RenderService(
-        List<string> configCustomPaths)
-    {
-        _configCustomPaths = configCustomPaths;
-    }
     
-    
-    public void RenderHeader()
+    public static void RenderHeader()
     {
         AnsiConsole.Clear();
         AnsiConsole.MarkupLine("[bold gold3]╔════════════════════════════════════════╗[/]");
@@ -24,7 +16,7 @@ public class RenderService
         AnsiConsole.MarkupLine("[bold gold3]╚════════════════════════════════════════╝[/]");
     }
     
-    public void RenderSearchMode()
+    public static void RenderSearchMode()
     {
         AnsiConsole.MarkupLine("");
         AnsiConsole.MarkupLine("[dim]Type to search | Ctrl+P: Add path | Ctrl+D: Debug | Ctrl+C: Exit[/]");
@@ -43,7 +35,7 @@ public class RenderService
                 }
                 
                 var allPaths = Global.DefaultSearchPaths.Where(Directory.Exists)
-                    .Concat(_configCustomPaths.Where(Directory.Exists))
+                    .Concat(Global.CustomPaths.Where(Directory.Exists))
                     .Distinct()
                     .ToList();
                 
@@ -84,11 +76,11 @@ public class RenderService
         
         AnsiConsole.MarkupLine("");
         AnsiConsole.Markup($"[bold green]Search:[/] ");
-        AnsiConsole.MarkupLine(Markup.Escape(_searchQuery));
+        AnsiConsole.MarkupLine(Markup.Escape(Global.SearchQuery));
         AnsiConsole.MarkupLine("");
     }
     
-    public void RenderAddPathMode()
+    public static void RenderAddPathMode()
     {
         AnsiConsole.MarkupLine("");
         AnsiConsole.MarkupLine("[bold yellow]╭─ ADD PATH MODE ──────────────────────────╮[/]");
@@ -99,7 +91,7 @@ public class RenderService
         AnsiConsole.MarkupLine("");
         AnsiConsole.MarkupLine("[bold]Current search paths:[/]");
         
-        var allPaths = Global.DefaultSearchPaths.Where(Directory.Exists).Concat(_configCustomPaths).Distinct().ToList();
+        var allPaths = Global.DefaultSearchPaths.Where(Directory.Exists).Concat(Global.CustomPaths).Distinct().ToList();
         foreach (var p in allPaths)
         {
             AnsiConsole.MarkupLine($"  [blue]{p}[/]");
@@ -111,7 +103,7 @@ public class RenderService
         AnsiConsole.MarkupLine("");
     }
     
-    public void RenderResults()
+    public static void RenderResults()
     {
         if (Global.IsAddPathMode) return;
     
@@ -125,7 +117,7 @@ public class RenderService
     
         if (Global.ShowFuzzy)
         {
-            AnsiConsole.MarkupLine($"[yellow]No exact matches. Showing fuzzy results for:[/] [bold]{_searchQuery}[/]");
+            AnsiConsole.MarkupLine($"[yellow]No exact matches. Showing fuzzy results for:[/] [bold]{Global.SearchQuery}[/]");
         }
         else if (Global.Results.Count > 0)
         {
@@ -133,9 +125,9 @@ public class RenderService
             var currentPageNum = Global.CurrentPage + 1;
             AnsiConsole.MarkupLine($"[green]Found[/] [bold]{Global.Results.Count}[/] [green]file(s) | Page[/] [bold]{currentPageNum}[/][green]/[/][bold]{totalPages}[/]");
         }
-        else if (!string.IsNullOrEmpty(_searchQuery))
+        else if (!string.IsNullOrEmpty(Global.SearchQuery))
         {
-            AnsiConsole.MarkupLine($"[yellow]No files found for:[/] [bold]{_searchQuery}[/]");
+            AnsiConsole.MarkupLine($"[yellow]No files found for:[/] [bold]{Global.SearchQuery}[/]");
         }
     
         AnsiConsole.MarkupLine("");

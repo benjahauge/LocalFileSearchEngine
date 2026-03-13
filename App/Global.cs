@@ -19,6 +19,12 @@ public static class Global
     public static string PendingPath { get; set; } = "";
     
     public static Lock IndexLock = new();
+
+    public static string SearchQuery = "";
+    public static Config? Config { get; set; }
+    public static List<string> CustomPaths { get; set; } = Config?.CustomPaths ?? [];
+
+    
     static Global()
     {
         var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
