@@ -18,7 +18,11 @@ public class AppConfig
                 return JsonSerializer.Deserialize<Config>(json) ?? new Config();
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+        }
+        
         return new Config();
     }
 
@@ -30,7 +34,10 @@ public class AppConfig
             var json = JsonSerializer.Serialize(config, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(ConfigFile, json);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+        }
     }
 
     public static void SaveIndex(List<FileResult> index)
@@ -41,7 +48,10 @@ public class AppConfig
             var json = JsonSerializer.Serialize(index, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(IndexFile, json);
         }
-        catch { }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+        }
     }
 
     public static List<FileResult>? LoadIndex()
@@ -54,7 +64,10 @@ public class AppConfig
                 return JsonSerializer.Deserialize<List<FileResult>>(json);
             }
         }
-        catch { }
+        catch (Exception ex)
+        {
+            SentrySdk.CaptureException(ex);
+        }
         return null;
     }
 }
