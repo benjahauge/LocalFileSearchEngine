@@ -17,3 +17,5 @@
 /Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/obj/Debug/net10.0/FileSearchEngine.genruntimeconfig.cache
 /Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/obj/Debug/net10.0/ref/filesearch.dll
 /Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/obj/Debug/net10.0/FileSearchEngine.sourcelink.json
+/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/bin/Debug/net10.0/Sentry.dll
+/Users/benjahauge/Projects/PrivateDev/DotNet/FileSearchEngine/obj/Debug/net10.0/Sentry.Attributes.cs

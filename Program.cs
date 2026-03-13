@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Spectre.Console;
 using FuzzySharp;
+using Sentry;
 
 namespace FileSearchEngine;
 
@@ -28,6 +29,23 @@ public static class Program
 
     static Program()
     {
+        SentrySdk.Init(options =>
+        {
+            // A Sentry Data Source Name (DSN) is required.
+            // See https://docs.sentry.io/product/sentry-basics/dsn-explainer/
+            // You can set it in the SENTRY_DSN environment variable, or you can set it in code here.
+            options.Dsn = "https://8cabc4a4c1a7d56941cf3b3b133075ff@o4510443959353344.ingest.de.sentry.io/4511037436526672";
+
+            // When debug is enabled, the Sentry client will emit detailed debugging information to the console.
+            // This might be helpful, or might interfere with the normal operation of your application.
+            // We enable it here for demonstration purposes when first trying Sentry.
+            // You shouldn't do this in your applications unless you're troubleshooting issues with Sentry.
+            options.Debug = true;
+
+            // This option is recommended. It enables Sentry's "Release Health" feature.
+            options.AutoSessionTracking = true;
+        });
+        
         var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         DefaultSearchPaths =
         [

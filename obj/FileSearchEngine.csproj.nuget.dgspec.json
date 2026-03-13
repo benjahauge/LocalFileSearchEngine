@@ -50,6 +50,10 @@
               "target": "Package",
               "version": "[2.0.2, )"
             },
+            "Sentry": {
+              "target": "Package",
+              "version": "[6.2.0, )"
+            },
             "Spectre.Console": {
               "target": "Package",
               "version": "[0.49.1, )"
