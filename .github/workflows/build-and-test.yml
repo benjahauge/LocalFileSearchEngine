@@ -2,7 +2,6 @@ name: build and test
 
 on:
     push:
-        branches: [add-solution-and-tests]
 
 env:
     DOTNET_VERSION: '10.0'
