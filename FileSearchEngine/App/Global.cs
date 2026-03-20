@@ -22,18 +22,27 @@ public static class Global
 
     public static string SearchQuery = "";
     public static Config? Config { get; set; }
-    public static List<string> CustomPaths { get; set; } = Config?.CustomPaths ?? [];
-
+    public static List<string> CustomPaths { get; set; } = [];
     
     static Global()
     {
         var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-        DefaultSearchPaths =
-        [
-            Path.Combine(home, "Documents"),
-            Path.Combine(home, "Desktop"),
-            Path.Combine(home, "Projects"),
-        ];
+        
+        var envPaths = Environment.GetEnvironmentVariable("SEARCH_PATHS");
+        if (!string.IsNullOrEmpty(envPaths))
+        {
+            CustomPaths = envPaths.Split(':').ToList();
+            DefaultSearchPaths = CustomPaths.ToArray();
+        }
+        else
+        {
+            DefaultSearchPaths =
+            [
+                Path.Combine(home, "Documents"),
+                Path.Combine(home, "Desktop"),
+                Path.Combine(home, "Projects"),
+            ];
+        }
 
         FileIndex = new List<FileResult>();
     }
